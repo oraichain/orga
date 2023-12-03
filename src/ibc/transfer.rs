@@ -33,7 +33,7 @@ use ibc::{
     },
     Signer,
 };
-const ACCOUNT_PREFIX: &str = "nomic"; // TODO: configurable prefix
+const ACCOUNT_PREFIX: &str = "oraibtc"; // TODO: configurable prefix
 impl From<TokenTransferError> for crate::Error {
     fn from(err: TokenTransferError) -> Self {
         crate::Error::Ibc(err.to_string())
