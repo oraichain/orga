@@ -4,7 +4,7 @@ use std::{fmt::Display, str::FromStr};
 pub use amount::*;
 
 pub mod symbol;
-use orga_macros::{orga, FieldQuery};
+use orga_macros::orga;
 pub use symbol::*;
 
 pub mod coin;
@@ -55,33 +55,14 @@ pub use ops::*;
 use bech32::{self, encode_to_fmt, FromBase32, ToBase32, Variant};
 
 use crate::collections::Next;
-use crate::describe::Describe;
-use crate::macros::State;
 use crate::migrate::Migrate;
-use ed::{Decode, Encode};
 use ripemd::{Digest as _, Ripemd160};
 use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 
-const HRP_PREFIX: &str = "oraibtc";
-
-#[derive(
-    Encode,
-    Decode,
-    State,
-    Next,
-    FieldQuery,
-    Clone,
-    PartialEq,
-    Eq,
-    PartialOrd,
-    Ord,
-    Hash,
-    Debug,
-    Copy,
-    Default,
-    Describe,
-)]
+pub const BECH32_PREFIX: &str = "oraibtc";
+#[orga(skip(Serialize, Deserialize, Migrate))]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug, Copy, Next)]
 pub struct Address {
     bytes: [u8; Address::LENGTH],
 }
@@ -92,7 +73,11 @@ impl Migrate for Address {
         _dest: crate::store::Store,
         bytes: &mut &[u8],
     ) -> crate::Result<Self> {
-        Ok(Self::decode(bytes)?)
+        let mut buf = [0u8; Address::LENGTH];
+        buf.copy_from_slice(&bytes[..Address::LENGTH]);
+        *bytes = &bytes[Address::LENGTH..];
+
+        Ok(Self { bytes: buf })
     }
 }
 
@@ -140,7 +125,7 @@ impl Address {
 
 impl Display for Address {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        encode_to_fmt(f, HRP_PREFIX, self.bytes.to_base32(), Variant::Bech32).unwrap()
+        encode_to_fmt(f, BECH32_PREFIX, self.bytes.to_base32(), Variant::Bech32).unwrap()
     }
 }
 
@@ -148,7 +133,7 @@ impl FromStr for Address {
     type Err = bech32::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (hrp, data, variant) = bech32::decode(s)?;
-        if hrp != HRP_PREFIX {
+        if hrp != BECH32_PREFIX {
             return Err(bech32::Error::MissingSeparator);
         }
         if variant != Variant::Bech32 {
@@ -228,7 +213,7 @@ pub struct VersionedAddress {
 
 impl Display for VersionedAddress {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        encode_to_fmt(f, HRP_PREFIX, self.bytes.to_base32(), Variant::Bech32).unwrap()
+        encode_to_fmt(f, BECH32_PREFIX, self.bytes.to_base32(), Variant::Bech32).unwrap()
     }
 }
 
