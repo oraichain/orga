@@ -1,5 +1,5 @@
 use crate::{
-    coins::{Address, Amount, Coin, Symbol, HRP_PREFIX},
+    coins::{Address, Amount, Coin, Symbol, BECH32_PREFIX},
     collections::Map,
     describe::{Builder, Describe},
     encoding::LengthVec,
@@ -88,7 +88,7 @@ impl TokenTransferValidationContext for Transfer {
         channel_id: &ChannelId,
     ) -> Result<Self::AccountId, TokenTransferError> {
         let account_id = AccountId::new(
-            HRP_PREFIX,
+            BECH32_PREFIX,
             &cosmos_adr028_escrow_address(port_id, channel_id),
         )
         .map_err(|_| TokenTransferError::ParseAccountFailure)?;
