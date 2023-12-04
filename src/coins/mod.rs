@@ -63,6 +63,8 @@ use ripemd::{Digest as _, Ripemd160};
 use serde::{Deserialize, Serialize};
 use sha2::Sha256;
 
+pub const BECH32_PREFIX: &str = "orai";
+
 #[derive(
     Encode,
     Decode,
@@ -138,7 +140,7 @@ impl Address {
 
 impl Display for Address {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        encode_to_fmt(f, "nomic", self.bytes.to_base32(), Variant::Bech32).unwrap()
+        encode_to_fmt(f, BECH32_PREFIX, self.bytes.to_base32(), Variant::Bech32).unwrap()
     }
 }
 
@@ -146,7 +148,7 @@ impl FromStr for Address {
     type Err = bech32::Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let (hrp, data, variant) = bech32::decode(s)?;
-        if hrp != "nomic" {
+        if hrp != BECH32_PREFIX {
             return Err(bech32::Error::MissingSeparator);
         }
         if variant != Variant::Bech32 {
@@ -226,7 +228,7 @@ pub struct VersionedAddress {
 
 impl Display for VersionedAddress {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        encode_to_fmt(f, "nomic", self.bytes.to_base32(), Variant::Bech32).unwrap()
+        encode_to_fmt(f, BECH32_PREFIX, self.bytes.to_base32(), Variant::Bech32).unwrap()
     }
 }
 
