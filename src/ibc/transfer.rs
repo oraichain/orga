@@ -1,5 +1,5 @@
 use crate::{
-    coins::{Address, Amount, Coin, Symbol},
+    coins::{Address, Amount, Coin, Symbol, HRP_PREFIX},
     collections::Map,
     describe::{Builder, Describe},
     encoding::LengthVec,
@@ -33,7 +33,6 @@ use ibc::{
     },
     Signer,
 };
-const ACCOUNT_PREFIX: &str = "oraibtc"; // TODO: configurable prefix
 impl From<TokenTransferError> for crate::Error {
     fn from(err: TokenTransferError) -> Self {
         crate::Error::Ibc(err.to_string())
@@ -89,7 +88,7 @@ impl TokenTransferValidationContext for Transfer {
         channel_id: &ChannelId,
     ) -> Result<Self::AccountId, TokenTransferError> {
         let account_id = AccountId::new(
-            ACCOUNT_PREFIX,
+            HRP_PREFIX,
             &cosmos_adr028_escrow_address(port_id, channel_id),
         )
         .map_err(|_| TokenTransferError::ParseAccountFailure)?;
