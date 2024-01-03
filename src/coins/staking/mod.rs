@@ -38,7 +38,7 @@ pub struct Staking<S: Symbol> {
     pub max_validators: u64,
     last_indexed_power: Map<Address, u64>,
     address_for_tm_hash: Map<[u8; 20], VersionedAddress>,
-    unbonding_seconds: u64,
+    pub unbonding_seconds: u64,
     pub max_offline_blocks: u64,
     pub slash_fraction_double_sign: Decimal,
     pub slash_fraction_downtime: Decimal,
