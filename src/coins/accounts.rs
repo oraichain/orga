@@ -1,10 +1,14 @@
+use cosmrs::crypto::PublicKey;
+
 use crate::coins::{Address, Amount, Coin, Give, Symbol, Take};
 use crate::collections::map::Iter as MapIter;
 use crate::collections::Map;
 use crate::context::GetContext;
+use crate::migrate::Migrate;
 use crate::orga;
 use crate::plugins::Paid;
 use crate::plugins::Signer;
+use crate::state::State;
 use crate::{Error, Result};
 
 #[orga]
@@ -12,7 +16,51 @@ pub struct Accounts<S: Symbol> {
     transfers_allowed: bool,
     transfer_exceptions: Map<Address, ()>,
     accounts: Map<Address, Coin<S>>,
+    pub_keys: Map<Address, PublicKey>,
 }
+
+impl Migrate for PublicKey {}
+impl State for PublicKey {
+    fn load(_store: orga::store::Store, _bytes: &mut &[u8]) -> orga::Result<Self> {
+        unreachable!()
+    }
+
+    fn attach(&mut self, _store: orga::store::Store) -> orga::Result<()> {
+        unreachable!()
+    }
+
+    fn flush<W: std::io::Write>(self, _out: &mut W) -> orga::Result<()> {
+        unreachable!()
+    }
+}
+
+// impl<K, V> State for Map<K, V>
+// where
+//     K: Encode + Terminated + 'static,
+//     V: State,
+// {
+//     fn attach(&mut self, store: Store) -> Result<()> {
+//         for (key, value) in self.children.iter_mut() {
+//             value.attach(store.sub(key.inner_bytes.as_slice()))?;
+//         }
+//         self.store.attach(store)
+//     }
+
+//     fn flush<W: std::io::Write>(mut self, _out: &mut W) -> Result<()> {
+//         while let Some((key, maybe_value)) = self.children.pop_first() {
+//             Self::apply_change(&mut self.store, key.inner.encode()?, maybe_value)?;
+//         }
+
+//         Ok(())
+//     }
+
+//     fn load(store: Store, _bytes: &mut &[u8]) -> Result<Self> {
+//         let mut map = Self::default();
+//         map.attach(store)?;
+
+//         Ok(map)
+//     }
+// }
 
 #[orga]
 impl<S: Symbol> Accounts<S> {
@@ -32,6 +80,16 @@ impl<S: Symbol> Accounts<S> {
 
         Ok(())
     }
+
+    // #[call]
+    // pub fn store_pubkey(&mut self, addr: Address, pub_key: PublicKey) -> Result<()> {
+    //     let mut receiver = self
+    //         .pub_keys
+    //         .entry(addr)?
+    //         .or_create(PublicKey::from_json("").map_err(|err| Error::App(err.to_string()))?)?;
+
+    //     Ok(())
+    // }
 
     #[call]
     pub fn take_as_funding(&mut self, amount: Amount) -> Result<()> {
