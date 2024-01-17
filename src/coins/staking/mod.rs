@@ -1,5 +1,8 @@
 use super::pool::{Child as PoolChild, ChildMut as PoolChildMut};
-use super::{Address, Amount, Balance, Coin, Decimal, Give, Pool, Symbol, VersionedAddress};
+use super::{
+    Address, Amount, Balance, Coin, Decimal, Give, Pool, QueryStakingPoolResponse, StakingPoolInfo,
+    Symbol, VersionedAddress,
+};
 use crate::abci::{BeginBlock, EndBlock};
 use crate::collections::{Deque, Entry, EntryMap, Map};
 use crate::context::GetContext;
@@ -553,23 +556,18 @@ impl<S: Symbol> Staking<S> {
     }
 
     #[query]
-    pub fn validator_delegations(
-        &self,
-        validator_address: Address,
-    ) -> Result<Vec<(Address, DelegationInfo)>> {
-        self.validators
-            .get(validator_address)?
-            .delegators
-            .iter()?
-            .map(|entry| -> Result<(Address, DelegationInfo)> {
-                let (delegator, delegation) = entry?;
-                Ok((delegator, delegation.info()?))
-            })
-            .collect()
+    pub fn pool(&self) -> Result<QueryStakingPoolResponse> {
+        let staked = self.staked()?;
+        Ok(QueryStakingPoolResponse {
+            pool: StakingPoolInfo {
+                not_bonded_tokens: Amount::new(0u64),
+                bonded_tokens: staked,
+            },
+        })
     }
 
     #[query]
-    pub fn all_validators(&self) -> Result<Vec<ValidatorQueryInfo>> {
+    pub fn validators(&self) -> Result<Vec<ValidatorQueryInfo>> {
         self.validators
             .iter()?
             .map(|entry| {
