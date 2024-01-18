@@ -29,6 +29,17 @@ where
     symbol: PhantomData<S>,
 }
 
+#[orga]
+pub struct QueryStakingPoolResponse {
+    pub pool: StakingPoolInfo,
+}
+
+#[orga]
+pub struct StakingPoolInfo {
+    pub not_bonded_tokens: Amount,
+    pub bonded_tokens: Amount,
+}
+
 impl<K, V, S> Balance<S, Decimal> for Pool<K, V, S>
 where
     K: Terminated + Encode + Decode + Clone + Send + Sync + 'static,

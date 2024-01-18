@@ -1,3 +1,5 @@
+use serde::Serialize;
+
 use crate::coins::pool::{Child as PoolChild, ChildMut as PoolChildMut};
 use crate::coins::{Address, Amount, Balance, Coin, Decimal, Give, Pool, Symbol, VersionedAddress};
 use crate::context::GetContext;
@@ -25,7 +27,7 @@ pub struct Validator<S: Symbol> {
     pub(super) min_self_delegation: Amount,
 }
 
-#[derive(Encode, Decode)]
+#[derive(Encode, Decode, Serialize)]
 pub struct ValidatorQueryInfo {
     pub jailed_until: Option<i64>,
     pub tombstoned: bool,
@@ -155,7 +157,7 @@ impl<S: Symbol + Default> Validator<S> {
         Ok(redelegations)
     }
 
-    pub(super) fn delegator_keys(&self) -> Result<Vec<Address>> {
+    pub fn delegator_keys(&self) -> Result<Vec<Address>> {
         let mut delegator_keys: Vec<Address> = vec![];
         self.delegators
             .iter()?

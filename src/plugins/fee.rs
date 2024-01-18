@@ -12,7 +12,7 @@ use crate::{Error, Result};
 use std::marker::PhantomData;
 use std::ops::{Deref, DerefMut};
 
-pub const MIN_FEE: u64 = 10_000;
+pub const MIN_FEE: u64 = 0;
 
 #[orga(skip(Call, Query))]
 pub struct FeePlugin<S, T> {
