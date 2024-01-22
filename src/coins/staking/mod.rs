@@ -34,8 +34,8 @@ const EDIT_INTERVAL_SECONDS: u64 = 60 * 60 * 24; // 1 day
 pub struct Staking<S: Symbol> {
     validators: Pool<Address, Validator<S>, S>,
     pub min_self_delegation_min: u64,
-    consensus_keys: Map<Address, [u8; 32]>,
-    last_signed_block: Map<[u8; 20], u64>,
+    pub consensus_keys: Map<Address, [u8; 32]>,
+    pub last_signed_block: Map<[u8; 20], u64>,
     validators_by_power: EntryMap<ValidatorPowerEntry>,
     last_validator_powers: Map<Address, u64>,
     pub max_validators: u64,
