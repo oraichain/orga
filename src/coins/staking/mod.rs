@@ -567,7 +567,7 @@ impl<S: Symbol> Staking<S> {
     }
 
     #[query]
-    pub fn validators(&self) -> Result<Vec<ValidatorQueryInfo>> {
+    pub fn all_validators(&self) -> Result<Vec<ValidatorQueryInfo>> {
         self.validators
             .iter()?
             .map(|entry| {
