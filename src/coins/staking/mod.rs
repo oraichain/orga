@@ -24,9 +24,9 @@ pub use delegator::*;
 mod validator;
 pub use validator::*;
 
-#[cfg(test)]
-pub const UNBONDING_SECONDS: u64 = 10; // 10 seconds
-#[cfg(not(test))]
+// #[cfg(test)]
+// pub const UNBONDING_SECONDS: u64 = 10; // 10 seconds
+// #[cfg(not(test))]
 pub const UNBONDING_SECONDS: u64 = 60 * 60 * 24 * 14; // 2 weeks
 const EDIT_INTERVAL_SECONDS: u64 = 60 * 60 * 24; // 1 day
 
