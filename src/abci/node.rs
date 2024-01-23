@@ -62,7 +62,7 @@ impl Child {
             if let Some(err) = self.abci_shutdown_handle.read().unwrap().as_ref() {
                 break Err(Error::App(err.to_string()));
             } else {
-                std::thread::sleep(Duration::from_secs(5));
+                std::thread::sleep(Duration::from_millis(10));
             }
         }
     }
