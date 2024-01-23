@@ -548,8 +548,7 @@ impl Tendermint {
                     }
 
                     stdout.read_line(&mut line).unwrap();
-                    if let Some(err) = line
-                        .parse()
+                    line.parse()
                         .map(|msg: LogMessage| {
                             log::debug!("{:#?}", msg);
                             match msg.message.as_str() {
@@ -582,11 +581,7 @@ impl Tendermint {
                                 _ => {}
                             }
                         })
-                        .err()
-                    {
-                        log::error!("Tendermint error in start thread: {}", err);
-                        panic!("{}", err);
-                    }
+                        .unwrap_or_else(|_| println!("! {}", line));
 
                     line.clear();
                 }
