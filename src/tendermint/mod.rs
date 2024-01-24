@@ -581,7 +581,7 @@ impl Tendermint {
                                 _ => {}
                             }
                         })
-                        .unwrap_or_else(|_| println!("! {}", line));
+                        .unwrap_or_else(|_| println!("Error parsing lines {}", line));
 
                     line.clear();
                 }
