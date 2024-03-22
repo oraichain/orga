@@ -21,12 +21,23 @@ where
     contributions: Decimal,
     rewards: Map<u8, Decimal>,
     shares_issued: Decimal,
-    map: Map<K, RefCell<Entry<V>>>,
+    pub map: Map<K, RefCell<Entry<V>>>,
     rewards_this_period: Map<u8, Decimal>,
     last_period_entry: Map<u8, Decimal>,
     #[state(skip)]
     drop_errored: bool,
     symbol: PhantomData<S>,
+}
+
+#[orga]
+pub struct QueryStakingPoolResponse {
+    pub pool: StakingPoolInfo,
+}
+
+#[orga]
+pub struct StakingPoolInfo {
+    pub not_bonded_tokens: Amount,
+    pub bonded_tokens: Amount,
 }
 
 impl<K, V, S> Balance<S, Decimal> for Pool<K, V, S>

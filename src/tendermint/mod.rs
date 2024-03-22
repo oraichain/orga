@@ -548,7 +548,8 @@ impl Tendermint {
                     }
 
                     stdout.read_line(&mut line).unwrap();
-                    line.parse()
+                    if let Some(err) = line
+                        .parse()
                         .map(|msg: LogMessage| {
                             log::debug!("{:#?}", msg);
                             match msg.message.as_str() {
@@ -581,7 +582,11 @@ impl Tendermint {
                                 _ => {}
                             }
                         })
-                        .unwrap_or_else(|_| println!("! {}", line));
+                        .err()
+                    {
+                        log::error!("Tendermint error in start thread: {}", err);
+                        panic!("{}", err);
+                    }
 
                     line.clear();
                 }
@@ -713,4 +718,32 @@ mod tests {
 
         assert_eq!(file_set, expected);
     }
+
+    // #[test]
+    // async fn tendermint_start_should_panic() {
+    //     let temp_dir = TempDir::new("tendermint_test").unwrap();
+    //     let temp_dir_path = temp_dir.path();
+    //     let mut tendermint = Tendermint::new(temp_dir_path)
+    //         .stdout(Stdio::null())
+    //         .init()
+    //         .await;
+
+    //     tendermint.install().await;
+    //     tendermint.mutate_configuration();
+    //     let mut document = match tendermint.config_contents {
+    //         Some(inner) => inner.clone(),
+    //         None => {
+    //             return;
+    //         }
+    //     };
+    //     document["rpc"]["laddr"] = toml_edit::value("http://0.0.0.0:26657");
+    //     // write faulty config toml value so we can get panic
+    //     let config_path = tendermint.home.join("config/config.toml");
+    //     fs::write(config_path, document.to_string())
+    //         .expect("Unable to write modified config.toml to file.");
+
+    //     // apply config content with latest faulty value
+    //     tendermint.read_config_toml();
+    //     tendermint.start().await;
+    // }
 }
