@@ -467,6 +467,7 @@ mod server {
                     };
                     if let Err(err) = req_sender.send((req, res_sender.clone())) {
                         log::warn!("Error sending request from worker: {}", err);
+                        log::info!("req sender: {:?}, req: {:?} res_sender: {:?}", req_sender, req, res_sender);
                         break;
                     }
                     let res = res_receiver.recv().unwrap();
