@@ -374,12 +374,6 @@ mod server {
             self.create_worker(server.accept()?, self.shutdown.clone())?;
             self.create_worker(server.accept()?, self.shutdown.clone())?;
             self.create_worker(server.accept()?, self.shutdown.clone())?;
-            self.create_worker(server.accept()?, self.shutdown.clone())?;
-            self.create_worker(server.accept()?, self.shutdown.clone())?;
-            self.create_worker(server.accept()?, self.shutdown.clone())?;
-            self.create_worker(server.accept()?, self.shutdown.clone())?;
-            self.create_worker(server.accept()?, self.shutdown.clone())?;
-
 
             loop {
                 if let Some(e) = self.shutdown.read().unwrap().as_ref() {
@@ -421,6 +415,7 @@ mod server {
                         if self.height >= stop_height {
                             let mut shutdown = self.shutdown_notifier.write().unwrap();
                             *shutdown = true;
+                            log::info("Yummy touch stop height");
                             break Err(Error::ABCI(format!(
                                 "Reached stop height ({})",
                                 stop_height
