@@ -469,6 +469,7 @@ mod server {
                         break;
                     }
                     let res = res_receiver.recv().unwrap();
+                    log::warn!("Res from worker: {:?}", res);
                     conn.write(res).unwrap();
                 }
             });
