@@ -374,6 +374,12 @@ mod server {
             self.create_worker(server.accept()?, self.shutdown.clone())?;
             self.create_worker(server.accept()?, self.shutdown.clone())?;
             self.create_worker(server.accept()?, self.shutdown.clone())?;
+            self.create_worker(server.accept()?, self.shutdown.clone())?;
+            self.create_worker(server.accept()?, self.shutdown.clone())?;
+            self.create_worker(server.accept()?, self.shutdown.clone())?;
+            self.create_worker(server.accept()?, self.shutdown.clone())?;
+            self.create_worker(server.accept()?, self.shutdown.clone())?;
+
 
             loop {
                 if let Some(e) = self.shutdown.read().unwrap().as_ref() {
@@ -469,7 +475,6 @@ mod server {
                         break;
                     }
                     let res = res_receiver.recv().unwrap();
-                    log::warn!("Res from worker: {:?}", res);
                     conn.write(res).unwrap();
                 }
             });
