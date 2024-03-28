@@ -260,6 +260,7 @@ impl<A: App> Node<A> {
             let mut shutdown = shutdown.write().unwrap();
 
             log::info!("[Temp] Response from upgrade: {:?}", res);
+            log::error!("[Temp] Response from upgrade: {:?}", res);
 
             match res {
                 Err(crate::Error::Upgrade(crate::upgrade::Error::Version { expected, actual })) => {
