@@ -259,6 +259,8 @@ impl<A: App> Node<A> {
             .listen(format!("127.0.0.1:{}", self.abci_port));
             let mut shutdown = shutdown.write().unwrap();
 
+            log::info!("[Temp] Response from upgrade: {:?}", res);
+
             match res {
                 Err(crate::Error::Upgrade(crate::upgrade::Error::Version { expected, actual })) => {
                     *shutdown = Some(crate::Error::Upgrade(crate::upgrade::Error::Version {
