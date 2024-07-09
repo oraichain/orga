@@ -50,7 +50,7 @@ impl Default for Upgrade {
         Self {
             signals: Default::default(),
             threshold: (Amount::new(2) / Amount::new(3)).result().unwrap(),
-            activation_delay_seconds: 60 * 60 * 24,
+            activation_delay_seconds: 60 * 10,
             rate_limit_seconds: 60,
             current_version,
         }
